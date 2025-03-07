@@ -1,0 +1,35 @@
+Technology Stack
+Frontend
+
+    Framework: Next.js 14+ with App Router
+    Styling: Tailwind CSS with mobile-first utility classes
+    State Management: React Context API for global state, React Query for server state
+    Performance Monitoring: Vercel Analytics + custom performance metrics
+
+Backend & Infrastructure
+
+    Database: Supabase (PostgreSQL with real-time capabilities)
+    CMS: Storyblok (headless CMS with visual editor)
+    Authentication: Supabase Auth with social login options
+    Search: Algolia for primary search, with Supabase full-text fallback for offline/basic search
+    Edge Functions: Vercel Edge Functions for region-specific optimizations
+
+Third-Party Services
+
+    Payments: PayPal API with regional payment method support
+    Email Service: Brevo for transactional and marketing emails
+    SMS Notifications: Twilio for order status updates (leveraging collected phone numbers)
+    CDN: Vercel Edge Network with strategic cache policies
+
+Testing & Quality Assurance
+
+    Unit Testing: Jest with React Testing Library
+    Integration Testing: Cypress for component integration
+    E2E Testing: Playwright for cross-browser and mobile simulation
+    Performance Testing: Lighthouse CI, WebPageTest integration
+
+Deployment
+
+    CI/CD: GitHub Actions pipeline with automated tests
+    Hosting: Vercel for production with preview environments
+    Infrastructure as Code: Terraform for Supabase resources

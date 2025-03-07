@@ -1,0 +1,122 @@
+import { getStoryblokApi, ISbStoriesParams, apiPlugin, storyblokInit } from '@storyblok/react/rsc';
+OOBBOO
+// Storyblok CDN API base URL - using US data center
+const OBSTORYBLOK_API_URL = 'https://api-us.storyblok.com/v2/cdn';
+
+// Determine if we're in a development environment
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+// Select the appropriate token based on environment
+const getStoryblokToken = (forPreview = false) => {
+  // In development, default to preview token unless specified otherwise
+  if (isDevelopment || forPreview) {
+    return process.env.STORYBLOK_PREVIEW_TOKEN || process.env.NEXT_PUBLIC_STORYBLOK_API_TOKEN;
+  }
+  
+  // In production, use public token for published content
+  return process.env.STORYBLOK_PUBLIC_TOKEN || process.env.NEXT_PUBLIC_STORYBLOK_API_TOKEN;
+};
+
+// Initialize Storyblok API with the required plugins
+const initializeStoryblokApi = () => {
+  try {
+    // Check if Storyblok is already initialized by trying to get the API
+    const api = getStoryblokApi();
+    if (api) return api;
+    
+    // Get the appropriate token for this environment
+    const token = getStoryblokToken(isDevelopment);
+    
+    // Log the token (partially masked for security)
+    const maskedToken = token && token.length > 8 
+      ? `${token.substring(0, 4)}...${token.substring(token.length - 4)}`
+      : '(invalid token)';
+    
+    console.log(`Initializing Storyblok with ${isDevelopment ? 'preview' : 'public'} token: ${maskedToken}, token length: ${token ? token.length : 0}`);
+
+    // If not initialized, initialize it with the apiPlugin and US region
+    storyblokInit({
+      accessToken: token || '',
+      use: [apiPlugin],
+      apiOptions: {
+        region: 'us', // Specify US region for API calls
+      }
+    });
+
+    return getStoryblokApi();
+  } catch (error) {
+    console.error('Failed to initialize Storyblok API:', error);
+    return null;
+  }
+};
+
+/**
+ * Fetches a story from Storyblok
+ * 
+ * @param slug The slug of the story to fetch
+ * @param params Additional parameters for the Storyblok API
+ * @param preview Whether to force using the preview token (otherwise determined by environment)
+ * @returns The story object or null if not found
+ */
+export async function fetchStoryblokStory(
+  slug: string, 
+  params: ISbStoriesParams = {},
+  preview = false
+) {
+  if (!slug) {
+    console.error('fetchStoryblok: No slug provided');
+    return null;
+  }
+
+  try {
+    // Initialize the Storyblok API with required plugins
+    const storyblokApi = initializeStoryblokApi();
+    
+    if (!storyblokApi) {
+      console.error('fetchStoryblok: Failed to initialize Storyblok API');
+      
+      // Fallback to direct fetch using fetch API if the storyblokApi initialization fails
+      const token = getStoryblokToken(preview || isDevelopment);
+      const apiVersion = (preview || isDevelopment) ? 'draft' : 'published';
+      
+      console.log(`Fallback: Directly fetching from ${STORYBLOK_API_URL}/stories/${slug} (${apiVersion} mode)`);
+      
+      try {
+        const response = await fetch(`${STORYBLOK_API_URL}/stories/${slug}?token=${token}&version=${apiVersion}`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fallback fetch successful');
+          return data.story || null;
+        } else {
+          console.error(`Fallback fetch failed with status: ${response.status}`);
+          return null;
+        }
+      } catch (fetchError) {
+        console.error('Fallback fetch failed:', fetchError);
+        return null;
+      }
+    }
+    
+    // Determine if we should use draft or published version
+    const usePreview = preview || isDevelopment;
+    const apiVersion = usePreview ? 'draft' : 'published';
+    
+    console.log(`Fetching Storyblok story "${slug}" in ${apiVersion} mode (environment: ${process.env.NODE_ENV})`);
+    
+    const response = await storyblokApi.get(`stories/${slug}`, {
+      version: apiVersion,
+      ...params,
+    });
+    
+    if (!response || !response.data) {
+      console.error(`fetchStoryblok: Empty response for slug "${slug}"`);
+      return null;
+    }
+    
+    return response.data?.story || null;
+  } catch (error) {
+    console.error(`Error fetching Storyblok story "${slug}":`, error);
+    // Return null instead of throwing to prevent page crashes
+    return null;
+  }
+} 
