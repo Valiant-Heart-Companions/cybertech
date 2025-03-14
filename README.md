@@ -1,4 +1,4 @@
-# Cecomsa E-commerce
+# Cybertech Website
 
 This is an e-commerce application built with Next.js and Storyblok CMS for the Cecomsa clone project.
 
