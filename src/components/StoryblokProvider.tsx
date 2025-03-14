@@ -70,22 +70,16 @@ try {
       use: [apiPlugin],
       components,
       apiOptions: {
-        region: 'us', // Specify US region for API calls
+        region: 'us',
         cache: {
           type: 'memory',
           clear: 'auto'
         },
         https: true,
         rateLimit: 5,
-        timeout: 10000, // 10 seconds
+        timeout: 10000
       },
-      // Add cache version through bridge options
-      bridge: {
-        // This applies the cache version parameter to Visual Editor requests
-        resolveRelations: ['product-list.products'],
-        customParent: window?.location?.origin || 'http://localhost:3000',
-        additionalParams: queryParams
-      }
+      bridge: isDevelopment // Only enable bridge in development mode
     });
     storyblokInitialized = true;
     console.log(`StoryblokProvider: Initialized successfully in ${isDevelopment ? 'development' : 'production'} mode with US region`);
