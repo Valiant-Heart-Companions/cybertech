@@ -1,17 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useCart } from '~/app/_components/cart/CartContext';
+import { useCart, CartItem } from '~/app/_components/cart/CartContext';
 import { useLanguage } from '~/i18n/LanguageContext';
 import { formatCurrency } from '~/utils/format';
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
 
 export default function OrderSummary() {
   const { items, totalItems, totalPrice } = useCart();
@@ -57,10 +49,10 @@ export default function OrderSummary() {
         <div className="mt-6 flow-root">
           <ul role="list" className="-my-6 divide-y divide-gray-200">
             {items.map((item: CartItem) => (
-              <li key={item.id} className="flex py-6">
+              <li key={item.productId} className="flex py-6">
                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                   <Image
-                    src={item.image}
+                    src={item.image || ''}
                     alt={item.name}
                     width={96}
                     height={96}
