@@ -3,38 +3,105 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { supabase } from '~/lib/supabase';
 import type { Product } from '~/lib/supabase';
+import { useLanguage } from '~/i18n/LanguageContext';
+import { translations } from '~/i18n/translations';
+import AddToCartButton from '~/app/_components/cart/AddToCartButton';
 
 export default function ProductGrid() {
+  const searchParams = useSearchParams();
+  const searchTerm = searchParams?.get('search') || '';
+  const categorySlug = searchParams?.get('category') || '';
+  const minPrice = searchParams?.get('minPrice') || '';
+  const maxPrice = searchParams?.get('maxPrice') || '';
+  const inStock = searchParams?.get('inStock') === 'true';
+  
   const [sortBy, setSortBy] = useState('featured');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [categoryName, setCategoryName] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const { language } = useLanguage();
+  const t = translations[language];
 
   useEffect(() => {
     async function fetchProducts() {
       try {
-        console.log('Fetching products from Supabase...');
-        console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-        console.log('Supabase Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 10) + '...');
-
-        // Test the connection first
-        const { data: testData, error: testError } = await supabase
-          .from('products')
-          .select('count')
-          .limit(1);
-
-        if (testError) {
-          console.error('Supabase connection test failed:', testError);
-          throw testError;
+        setLoading(true);
+        let categoryId: string | null = null;
+        
+        // If we have a category slug, get the category ID
+        if (categorySlug) {
+          const { data: categoryData, error: categoryError } = await supabase
+            .from('categories')
+            .select('id, name')
+            .eq('slug', categorySlug)
+            .single();
+          
+          if (categoryError) {
+            console.error('Error fetching category:', categoryError);
+          } else if (categoryData) {
+            categoryId = categoryData.id;
+            setCategoryName(categoryData.name);
+          }
+        } else {
+          setCategoryName('');
         }
-
-        console.log('Supabase connection test successful');
-
+        
+        // Create a base query to fetch products
         let query = supabase
           .from('products')
-          .select('*');
+          .select('*', { count: 'exact' });
+
+        // Apply category filter if specified
+        if (categoryId) {
+          // Get product IDs in this category
+          const { data: productCategoryData, error: productCategoryError } = await supabase
+            .from('product_categories')
+            .select('product_id')
+            .eq('category_id', categoryId);
+          
+          if (productCategoryError) {
+            console.error('Error fetching product categories:', productCategoryError);
+          } else if (productCategoryData && productCategoryData.length > 0) {
+            // Extract product IDs and filter the query
+            const productIds = productCategoryData.map(item => item.product_id);
+            query = query.in('id', productIds);
+          } else {
+            // No products in this category, return empty result
+            setProducts([]);
+            setTotalProducts(0);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Apply search filter if specified
+        if (searchTerm) {
+          query = query.textSearch('name', searchTerm, {
+            type: 'websearch',
+            config: 'english'
+          });
+        }
+
+        // Apply price filters if specified
+        if (minPrice) {
+          query = query.gte('current_price', parseFloat(minPrice));
+        }
+        
+        if (maxPrice) {
+          query = query.lte('current_price', parseFloat(maxPrice));
+        }
+        
+        // Apply stock filter if specified
+        if (inStock) {
+          query = query.gt('inventory_count', 0);
+        }
 
         // Apply sorting
         switch (sortBy) {
@@ -44,14 +111,16 @@ export default function ProductGrid() {
           case 'price-desc':
             query = query.order('current_price', { ascending: false });
             break;
-          case 'rating':
-            // We'll implement rating sorting later
+          case 'newest':
+            query = query.order('created_at', { ascending: false });
             break;
           default:
+            // Featured is the default sort
             query = query.order('created_at', { ascending: false });
         }
 
-        const { data, error } = await query;
+        // Execute the query
+        const { data, error, count } = await query;
 
         if (error) {
           console.error('Supabase query error:', error);
@@ -60,6 +129,7 @@ export default function ProductGrid() {
 
         console.log('Fetched products:', data?.length || 0);
         setProducts(data || []);
+        setTotalProducts(count || 0);
       } catch (err) {
         console.error('Error fetching products:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch products');
@@ -69,7 +139,17 @@ export default function ProductGrid() {
     }
 
     fetchProducts();
-  }, [sortBy]);
+  }, [sortBy, searchTerm, categorySlug, minPrice, maxPrice, inStock]);
+
+  const getPageTitle = () => {
+    if (categoryName) {
+      return categoryName;
+    } else if (searchTerm) {
+      return `${t.search?.resultsFor || 'Results for'} "${searchTerm}"`;
+    } else {
+      return t.shop.title;
+    }
+  };
 
   if (loading) {
     return (
@@ -88,77 +168,109 @@ export default function ProductGrid() {
   }
 
   return (
-    <div>
-      {/* Sort options */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">All Products</h1>
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="px-4 py-2 border rounded-lg bg-white"
-        >
-          <option value="featured">Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-        </select>
+    <div className="space-y-6">
+      {/* Title and sort options - mobile optimized */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {getPageTitle()}
+          </h1>
+          <p className="text-sm text-gray-500">
+            {totalProducts} {totalProducts === 1 ? t.shop.items.singular : t.shop.items.plural}
+          </p>
+        </div>
+        <div className="flex items-center">
+          <label htmlFor="sort-by" className="sr-only">
+            {t.shop.sort.label}
+          </label>
+          <select
+            id="sort-by"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="block w-full sm:w-auto px-4 py-2 border rounded-lg bg-white text-sm"
+          >
+            <option value="featured">{t.shop.sort.options.featured}</option>
+            <option value="price-asc">{t.shop.sort.options.priceAsc}</option>
+            <option value="price-desc">{t.shop.sort.options.priceDesc}</option>
+            <option value="newest">{t.shop.sort.options.newest}</option>
+          </select>
+        </div>
       </div>
 
-      {/* Product grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <Link
-            key={product.id}
-            href={`/shop/${product.sku}`}
-            className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-          >
-            <div className="relative aspect-square">
-              {product.image_url ? (
-                <Image
-                  src={product.image_url}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-400">No image</span>
-                </div>
-              )}
-            </div>
-            <div className="p-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-1">
-                {product.name}
-              </h3>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center">
-                  {product.discount_percentage && (
-                    <span className="text-sm text-red-600 font-medium mr-2">
-                      {product.discount_percentage}% OFF
-                    </span>
-                  )}
-                  <span className="text-lg font-semibold text-gray-900">
-                    ${product.current_price.toFixed(2)}
-                  </span>
-                  {product.list_price && product.list_price > product.current_price && (
-                    <span className="text-sm text-gray-500 line-through ml-2">
-                      ${product.list_price.toFixed(2)}
-                    </span>
+      {/* No results message */}
+      {products.length === 0 && (
+        <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+          <p className="text-lg text-gray-500">{t.shop.noResults}</p>
+          {(searchTerm || categorySlug) && (
+            <Link href="/shop" className="mt-4 inline-block text-blue-600 hover:underline">
+              {t.shop.categories.all}
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* Product grid - single column on mobile */}
+      {products.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col"
+            >
+              <Link href={`/shop/${product.sku}`} className="flex flex-col">
+                <div className="relative w-full aspect-square">
+                  {product.image_url ? (
+                    <Image
+                      src={product.image_url}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-400">{t.shop.noImage}</span>
+                    </div>
                   )}
                 </div>
-                {product.discount_label && (
-                  <span className="text-sm text-red-600 font-medium">
-                    {product.discount_label}
-                  </span>
-                )}
-              </div>
-              <div className="text-sm text-gray-500">
-                SKU: {product.sku}
-              </div>
+                <div className="p-3 sm:p-4 flex-1">
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                    <div className="flex items-center">
+                      <span className="text-base sm:text-lg font-semibold text-gray-900">
+                        ${product.current_price.toFixed(2)}
+                      </span>
+                      {product.list_price && product.list_price > product.current_price && (
+                        <span className="text-xs sm:text-sm text-gray-500 line-through ml-2">
+                          ${product.list_price.toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                    {product.discount_percentage && (
+                      <span className="text-xs sm:text-sm text-red-600 font-medium">
+                        {product.discount_percentage}% OFF
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-3">
+                    <AddToCartButton
+                      product={{
+                        id: product.id.toString(),
+                        name: product.name,
+                        price: product.current_price,
+                        image: product.image_url || undefined
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </Link>
             </div>
-          </Link>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 } 

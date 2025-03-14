@@ -3,9 +3,13 @@
 import { useState } from 'react';
 import LoginForm from '~/components/auth/LoginForm';
 import RegisterForm from '~/components/auth/RegisterForm';
+import { useLanguage } from '~/i18n/LanguageContext';
+import { translations } from '~/i18n/translations';
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+  const { language } = useLanguage();
+  const t = translations[language].account.auth;
 
   return (
     <div className="container mx-auto py-10 px-4">
@@ -19,7 +23,7 @@ export default function AuthPage() {
             }`}
             onClick={() => setActiveTab('login')}
           >
-            Login
+            {t.login}
           </button>
           <button
             className={`py-2 px-4 font-medium text-sm ${
@@ -29,7 +33,7 @@ export default function AuthPage() {
             }`}
             onClick={() => setActiveTab('register')}
           >
-            Create Account
+            {t.register}
           </button>
         </div>
 

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import type { Product } from '~/lib/supabase';
+import AddToCartButton from '~/app/_components/cart/AddToCartButton';
 
 interface ProductDetailProps {
   product: Product;
@@ -92,6 +93,19 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 </span>
               </>
             )}
+          </div>
+
+          {/* Add to Cart Button */}
+          <div className="py-4">
+            <AddToCartButton
+              product={{
+                id: product.id.toString(),
+                name: product.name,
+                price: product.current_price,
+                image: getAbsoluteImageUrl(product.image_url)
+              }}
+              className="w-full"
+            />
           </div>
 
           {/* Specifications */}

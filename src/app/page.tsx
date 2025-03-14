@@ -24,28 +24,6 @@ export default function Home() {
       />
       <CategoryGrid
         title={t.home.categories.title}
-        categories={[
-          {
-            name: t.home.categories.electronics,
-            href: '/shop/electronics',
-            image: '/images/categories/electronics.jpg'
-          },
-          {
-            name: t.home.categories.audio,
-            href: '/shop/audio',
-            image: '/images/categories/audio.jpg'
-          },
-          {
-            name: t.home.categories.wearables,
-            href: '/shop/wearables',
-            image: '/images/categories/wearables.jpg'
-          },
-          {
-            name: t.home.categories.accessories,
-            href: '/shop/accessories',
-            image: '/images/categories/accessories.jpg'
-          }
-        ]}
       />
       <PromotionalBanner
         title={t.home.promotions.title}

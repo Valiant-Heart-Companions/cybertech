@@ -7,7 +7,6 @@ import "./src/env.js";
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ['a.storyblok.com', 'www.cecomsa.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -21,6 +20,10 @@ const config = {
       },
     ],
   },
+  experimental: {
+    // Ensure we're using SWC
+    forceSwcTransforms: true,
+  }
 };
 
 export default config;

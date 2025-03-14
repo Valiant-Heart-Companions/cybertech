@@ -8,6 +8,9 @@ The Cecomsa clone will replicate the core e-commerce functionality of the origin
     Resilient architecture supporting intermittent connectivity
     Streamlined checkout flow capturing customer phone numbers
     Regional payment solutions with PayPal as primary processor
+    The Website is for the Dominican Republic market
+    The main languuage of the website will be Spanish although it will include a English translation.
+    The main language of the website is Spanish so at default everything should be in Spanish.
 
 2. Technology Stack
 Frontend

@@ -14,12 +14,17 @@ export const translations = {
       shop: 'Tienda',
       about: 'Sobre Nosotros',
       contact: 'Contacto',
-      corporate: 'Corporativo',
+      account: 'Mi Cuenta',
+    },
+    search: {
+      placeholder: 'Buscar productos...',
+      button: 'Buscar',
+      noResults: 'No se encontraron resultados',
+      resultsFor: 'Resultados para',
     },
     footer: {
       aboutUs: 'Sobre Nosotros',
       contact: 'Contacto',
-      corporate: 'Corporativo',
       privacyPolicy: 'Política de Privacidad',
       termsOfService: 'Términos de Servicio',
       allRightsReserved: 'Todos los derechos reservados',
@@ -51,10 +56,21 @@ export const translations = {
     },
     shop: {
       title: 'Tienda',
+      featured: 'Destacados',
+      items: {
+        singular: 'producto',
+        plural: 'productos'
+      },
       filters: {
         title: 'Filtros',
         apply: 'Aplicar',
         clear: 'Limpiar',
+        priceRange: 'Rango de Precio',
+        min: 'Mín.',
+        max: 'Máx.',
+        availability: 'Disponibilidad',
+        inStock: 'En Stock',
+        applying: 'Aplicando...'
       },
       sort: {
         label: 'Ordenar por',
@@ -62,10 +78,15 @@ export const translations = {
           featured: 'Destacados',
           priceAsc: 'Precio: Menor a Mayor',
           priceDesc: 'Precio: Mayor a Menor',
-          newest: 'Más Recientes',
-        },
+          newest: 'Más Recientes'
+        }
       },
       noResults: 'No se encontraron productos',
+      noImage: 'Sin imagen',
+      categories: {
+        all: 'Ver todos los productos',
+        title: 'Categorías'
+      }
     },
     about: {
       title: 'Sobre Cybertech',
@@ -96,10 +117,13 @@ export const translations = {
       phone: 'Teléfono',
       email: 'Correo Electrónico',
       businessHours: 'Horario de Atención',
-      addressContent: '123 Calle Tecnología\nCiudad Innovación, CI 12345\nRepública Dominicana',
-      phoneNumber: '+1 (809) 123-4567',
-      emailAddress: 'contacto@cybertech.com',
+      addressContent: 'Calle Rosario Esquina Salome Ureña\nMoca, Espaillat\nRepública Dominicana',
+      phoneNumber: '(809) 822-0511',
+      emailAddress: 'contacto@cybertechrd.com',
       businessHoursContent: 'Lunes - Viernes: 9:00 AM - 6:00 PM\nSábado: 10:00 AM - 4:00 PM\nDomingo: Cerrado',
+      city: 'Ciudad',
+      state: 'Provincia',
+      postalCode: 'Código Postal',
       form: {
         title: 'Envíenos un Mensaje',
         name: 'Nombre',
@@ -109,6 +133,74 @@ export const translations = {
         sendMessage: 'Enviar Mensaje',
       },
     },
+    account: {
+      title: 'Mi Cuenta',
+      welcome: 'Bienvenido',
+      orders: {
+        title: 'Mis Pedidos',
+        noOrders: 'No tienes pedidos aún',
+        notLoggedIn: 'Por favor inicia sesión para ver tus pedidos',
+        fetchError: 'Error al cargar los pedidos',
+        unexpectedError: 'Ocurrió un error inesperado',
+        tryAgain: 'Intentar de nuevo',
+        startShopping: 'Comenzar a comprar',
+        productNotFound: 'Producto no encontrado',
+        status: {
+          pending: 'Pendiente',
+          processing: 'Procesando',
+          shipped: 'Enviado',
+          delivered: 'Entregado',
+          cancelled: 'Cancelado'
+        }
+      },
+      profile: {
+        title: 'Perfil',
+        firstName: 'Nombre',
+        lastName: 'Apellido',
+        email: 'Correo electrónico',
+        phone: 'Teléfono',
+        save: 'Guardar cambios'
+      },
+      addresses: {
+        title: 'Direcciones',
+        addNew: 'Agregar nueva dirección',
+        edit: 'Editar',
+        delete: 'Eliminar',
+        default: 'Predeterminada',
+        noAddresses: 'No tienes direcciones guardadas',
+        defaultShipping: 'Dirección de envío predeterminada',
+        defaultBilling: 'Dirección de facturación predeterminada',
+        notLoggedIn: 'Por favor inicia sesión para ver tus direcciones',
+        fetchError: 'Error al cargar las direcciones',
+        unexpectedError: 'Ocurrió un error inesperado',
+        saveError: 'Error al guardar la dirección',
+        updateError: 'Error al actualizar la dirección',
+        deleteError: 'Error al eliminar la dirección',
+        deleteConfirmation: '¿Estás seguro de que deseas eliminar esta dirección?',
+        tryAgain: 'Intentar de nuevo'
+      },
+      auth: {
+        login: 'Iniciar sesión',
+        register: 'Crear cuenta',
+        logout: 'Cerrar sesión',
+        forgotPassword: '¿Olvidaste tu contraseña?',
+        email: 'Correo electrónico',
+        password: 'Contraseña',
+        confirmPassword: 'Confirmar contraseña',
+        firstName: 'Nombre',
+        lastName: 'Apellido',
+        phone: 'Teléfono',
+        required: 'Campo requerido',
+        invalidEmail: 'Correo electrónico inválido',
+        passwordMismatch: 'Las contraseñas no coinciden',
+        success: 'Cuenta creada exitosamente',
+        error: 'Ocurrió un error'
+      }
+    },
+    checkout: {
+      shipping: 'Envío',
+      billing: 'Facturación',
+    },
   },
   en: {
     navigation: {
@@ -116,12 +208,17 @@ export const translations = {
       shop: 'Shop',
       about: 'About Us',
       contact: 'Contact',
-      corporate: 'Corporate',
+      account: 'My Account',
+    },
+    search: {
+      placeholder: 'Search products...',
+      button: 'Search',
+      noResults: 'No results found',
+      resultsFor: 'Results for',
     },
     footer: {
       aboutUs: 'About Us',
       contact: 'Contact',
-      corporate: 'Corporate',
       privacyPolicy: 'Privacy Policy',
       termsOfService: 'Terms of Service',
       allRightsReserved: 'All rights reserved',
@@ -153,10 +250,21 @@ export const translations = {
     },
     shop: {
       title: 'Shop',
+      featured: 'Featured',
+      items: {
+        singular: 'product',
+        plural: 'products'
+      },
       filters: {
         title: 'Filters',
         apply: 'Apply',
         clear: 'Clear',
+        priceRange: 'Price Range',
+        min: 'Min',
+        max: 'Max',
+        availability: 'Availability',
+        inStock: 'In Stock',
+        applying: 'Applying...'
       },
       sort: {
         label: 'Sort by',
@@ -164,10 +272,15 @@ export const translations = {
           featured: 'Featured',
           priceAsc: 'Price: Low to High',
           priceDesc: 'Price: High to Low',
-          newest: 'Newest',
-        },
+          newest: 'Newest'
+        }
       },
       noResults: 'No products found',
+      noImage: 'No image',
+      categories: {
+        all: 'View all products',
+        title: 'Categories'
+      }
     },
     about: {
       title: 'About Cybertech',
@@ -198,10 +311,13 @@ export const translations = {
       phone: 'Phone',
       email: 'Email',
       businessHours: 'Business Hours',
-      addressContent: '123 Technology Street\nInnovation City, IC 12345\nCountry',
-      phoneNumber: '+1 (555) 123-4567',
-      emailAddress: 'contact@cybertech.com',
+      addressContent: 'Calle Rosario Esquina Salome Ureña\nMoca, Espaillat\nDominican Republic',
+      phoneNumber: '(809) 822-0511',
+      emailAddress: 'contact@cybertechrd.com',
       businessHoursContent: 'Monday - Friday: 9:00 AM - 6:00 PM\nSaturday: 10:00 AM - 4:00 PM\nSunday: Closed',
+      city: 'City',
+      state: 'State',
+      postalCode: 'Postal Code',
       form: {
         title: 'Send us a Message',
         name: 'Name',
@@ -210,6 +326,74 @@ export const translations = {
         message: 'Message',
         sendMessage: 'Send Message',
       },
+    },
+    account: {
+      title: 'My Account',
+      welcome: 'Welcome',
+      orders: {
+        title: 'My Orders',
+        noOrders: 'You have no orders yet',
+        notLoggedIn: 'Please log in to view your orders',
+        fetchError: 'Error loading orders',
+        unexpectedError: 'An unexpected error occurred',
+        tryAgain: 'Try again',
+        startShopping: 'Start shopping',
+        productNotFound: 'Product not found',
+        status: {
+          pending: 'Pending',
+          processing: 'Processing',
+          shipped: 'Shipped',
+          delivered: 'Delivered',
+          cancelled: 'Cancelled'
+        }
+      },
+      profile: {
+        title: 'Profile',
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        email: 'Email',
+        phone: 'Phone',
+        save: 'Save Changes'
+      },
+      addresses: {
+        title: 'Addresses',
+        addNew: 'Add New Address',
+        edit: 'Edit',
+        delete: 'Delete',
+        default: 'Default',
+        noAddresses: 'You have no saved addresses',
+        defaultShipping: 'Default Shipping Address',
+        defaultBilling: 'Default Billing Address',
+        notLoggedIn: 'Please log in to view your addresses',
+        fetchError: 'Error loading addresses',
+        unexpectedError: 'An unexpected error occurred',
+        saveError: 'Error saving address',
+        updateError: 'Error updating address',
+        deleteError: 'Error deleting address',
+        deleteConfirmation: 'Are you sure you want to delete this address?',
+        tryAgain: 'Try again'
+      },
+      auth: {
+        login: 'Login',
+        register: 'Create Account',
+        logout: 'Logout',
+        forgotPassword: 'Forgot Password?',
+        email: 'Email',
+        password: 'Password',
+        confirmPassword: 'Confirm Password',
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        phone: 'Phone',
+        required: 'Required field',
+        invalidEmail: 'Invalid email',
+        passwordMismatch: 'Passwords do not match',
+        success: 'Account created successfully',
+        error: 'An error occurred'
+      }
+    },
+    checkout: {
+      shipping: 'Shipping',
+      billing: 'Billing',
     },
   },
 } as const; 
