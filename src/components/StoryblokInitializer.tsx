@@ -59,30 +59,21 @@ export default function StoryblokInitializer({ children }: { children: React.Rea
           : '(invalid token)';
         console.log(`StoryblokInitializer: Using ${isDevelopment ? 'preview' : 'public'} token: ${maskedToken}`);
 
-        // Add query params for cache version
-        const queryParams = { cv: CACHE_VERSION.toString() };
-
         storyblokInit({
           accessToken: token,
           use: [apiPlugin],
           components,
           apiOptions: {
-            region: 'us', // Specify US region for API calls
+            region: 'us',
             cache: {
               type: 'memory',
               clear: 'auto'
             },
             https: true,
             rateLimit: 5,
-            timeout: 10000, // 10 seconds
+            timeout: 10000
           },
-          // Add cache version through bridge options
-          bridge: {
-            // This applies the cache version parameter to Visual Editor requests
-            resolveRelations: ['product-list.products'],
-            customParent: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
-            additionalParams: queryParams
-          }
+          bridge: isDevelopment
         });
         
         console.log(`StoryblokInitializer: Successfully initialized in ${isDevelopment ? 'development' : 'production'} mode with cache version ${CACHE_VERSION}`);
