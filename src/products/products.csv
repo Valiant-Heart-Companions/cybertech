@@ -1,0 +1,5 @@
+name,description,price,sale_price,inventory_count,category,image_url,rating,review_count,metadata
+Premium Laptop,High-performance laptop with latest specs,999.99,899.99,50,Electronics,/images/products/laptop.jpg,4.5,128,{"color":"Silver","storage":"512GB"}
+Wireless Headphones,Noise-cancelling wireless headphones,199.99,,100,Audio,/images/products/headphones.jpg,4.8,256,{"color":"Black","batteryLife":"30h"}
+Smart Watch,Fitness tracking smartwatch,299.99,249.99,75,Wearables,/images/products/smartwatch.jpg,4.3,89,{"color":"Black","waterproof":true}
+Tablet Pro,Professional tablet for work and entertainment,649.99,,30,Electronics,/images/products/tablet.jpg,4.6,167,{"color":"Space Gray","storage":"256GB"} 

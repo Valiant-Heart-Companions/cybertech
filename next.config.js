@@ -5,6 +5,25 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'a.storyblok.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.cecomsa.com',
+        pathname: '/**',
+      },
+    ],
+  },
+  experimental: {
+    // Ensure we're using SWC
+    forceSwcTransforms: true,
+  }
+};
 
 export default config;

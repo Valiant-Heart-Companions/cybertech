@@ -1,0 +1,531 @@
+Specification for Cecomsa Clone Application
+1. Project Overview
+
+The Cecomsa clone will replicate the core e-commerce functionality of the original website with significant optimizations for mobile users, low-end devices, and unstable network conditions. This specification prioritizes:
+
+    Mobile-first responsive design with progressive enhancement
+    Performance optimization targeting Core Web Vitals scores of ≥90
+    Resilient architecture supporting intermittent connectivity
+    Streamlined checkout flow capturing customer phone numbers
+    Regional payment solutions with PayPal as primary processor
+    The Website is for the Dominican Republic market
+    The main languuage of the website will be Spanish although it will include a English translation.
+    The main language of the website is Spanish so at default everything should be in Spanish.
+
+2. Technology Stack
+Frontend
+
+    Framework: Next.js 14+ with App Router
+    Styling: Tailwind CSS with mobile-first utility classes
+    State Management: React Context API for global state, React Query for server state
+    Performance Monitoring: Vercel Analytics + custom performance metrics
+
+Backend & Infrastructure
+
+    Database: Supabase (PostgreSQL with real-time capabilities)
+    Authentication: Supabase Auth with social login options
+    Search: Algolia for primary search, with Supabase full-text fallback for offline/basic search
+    Edge Functions: Vercel Edge Functions for region-specific optimizations
+
+Third-Party Services
+
+    Payments: PayPal API with regional payment method support
+    Email Service: Brevo for transactional and marketing emails
+    SMS Notifications: Twilio for order status updates (leveraging collected phone numbers)
+    CDN: Vercel Edge Network with strategic cache policies
+
+Testing & Quality Assurance
+
+    Unit Testing: Jest with React Testing Library
+    Integration Testing: Cypress for component integration
+    E2E Testing: Playwright for cross-browser and mobile simulation
+    Performance Testing: Lighthouse CI, WebPageTest integration
+
+Deployment
+
+    CI/CD: GitHub Actions pipeline with automated tests
+    Hosting: Vercel for production with preview environments
+    Infrastructure as Code: Terraform for Supabase resources
+
+3. Core Features
+3.1 Homepage
+
+Content:
+
+    Hero section with mobile-optimized image carousel (max 3 slides)
+    Featured products section with lazy-loaded images
+    Category navigation with touch-optimized tiles
+    Promotional banners with compressed imagery
+
+Technical Implementation:
+
+    Server components for initial data fetch with streaming HTML
+    Skeleton loading states for dynamic content
+    Above-the-fold content prioritization (< 100KB initial load)
+    Critical CSS inlined for instant rendering
+
+3.2 Product Catalog
+
+Content:
+
+    Category hierarchy with thumbnail images
+    Product listings with optimized preview images
+    Filter options defined per category
+    SEO metadata for categories
+
+Technical Implementation:
+
+    Virtualized lists for handling large product catalogs
+    Infinite scroll with "network-aware" loading (fewer items on slow connections)
+    Filter state preserved in URL parameters
+    Debounced search input to reduce API calls
+    Edge-cached category pages with 5-minute revalidation
+
+Mobile Optimizations:
+
+    Collapsible filter UI accessible via floating button
+    Single-column product view on small screens
+    Touch-friendly sorting dropdown
+    "Sticky" filter application button
+
+3.3 Product Detail Page
+
+Content:
+
+    Product images (main + gallery)
+    Product title, description, price, SKU
+    Technical specifications in structured format
+    Related/alternative products
+    Customer reviews section
+
+Technical Implementation:
+
+    Dynamic routes with ISR (revalidation every 1 hour)
+    Product schema markup for SEO
+    Priority hints for critical content loading
+    Intersection Observer for lazy-loading secondary content
+    Client-side product availability checks
+
+Mobile Optimizations:
+
+    Image gallery optimized for touch swiping
+    Sticky add-to-cart bar at bottom of viewport
+    Accordion-style sections for specifications/reviews
+    Quick-buy button with minimal steps
+
+3.4 Shopping Cart
+
+Technical Implementation:
+
+    Local storage persistence with Supabase sync
+    Real-time inventory validation before checkout
+    Cart state maintained across sessions
+    Debounced quantity updates to reduce API calls
+
+Mobile Optimizations:
+
+    Slide-in cart drawer from right edge
+    Touch-friendly quantity adjusters
+    Prominent "Proceed to Checkout" button
+    Visual feedback for cart operations
+
+3.5 Checkout
+
+User Experience:
+
+    Multi-step checkout with progress indicator
+    Single-page mobile checkout option for returning customers
+    Form validation with clear error messages
+    Smart defaulting based on previous orders
+
+Required Information:
+
+    Contact details (email + required phone number)
+    Shipping address with address validation
+    Billing address (optional copy from shipping)
+    Delivery method selection
+
+Payment Integration:
+
+    PayPal Smart Buttons with Express Checkout
+    Credit card processing via PayPal
+    Store payment information option for returning customers
+    Order summary with line items, shipping, tax, and total
+
+Technical Implementation:
+
+    Server-side validation for all checkout steps
+    Secure storage of order data in Supabase
+    Fraud prevention measures (IP validation, reCAPTCHA on suspicious activity)
+    Webhook handlers for payment status updates
+
+3.6 Corporate Solutions
+
+Content:
+
+    Business services description
+    Financing options with calculator
+    PDF catalogs (optimized for mobile downloading)
+    Success stories/case studies
+
+Technical Implementation:
+
+    PDF pre-caching for instant access when clicked
+    Progressive form for business inquiries (step-by-step)
+    Separate API route for business inquiries with priority flagging
+
+3.7 User Account
+
+Features:
+
+    Registration with email verification via Brevo
+    Social login (Google, Facebook) via Supabase Auth
+    Password recovery workflow
+    Order history with detailed view
+    Address book management
+    Account settings (notifications, preferences)
+
+Technical Implementation:
+
+    JWT-based authentication with secure refresh token rotation
+    Session management with device tracking
+    Role-based access control for customer service features
+    Data export capability for GDPR compliance
+
+Mobile Optimizations:
+
+    Biometric login option on supported devices
+    Simplified mobile navigation for account sections
+    One-tap reordering from order history
+
+3.8 Admin Panel
+
+Capabilities:
+
+    Order management dashboard with filtering and search
+    Customer data access with privacy controls
+    Sales and inventory reports
+    Promotion and discount code management
+
+Technical Implementation:
+
+    Admin-specific API routes with enhanced security
+    Role-based permissions system
+    Audit logging for all administrative actions
+    Batched operations for bulk updates
+
+3.9 Contact and Support
+
+Content:
+
+    Contact information (phone, WhatsApp, email)
+    Office locations and hours
+    FAQ section with categorized questions
+
+Technical Implementation:
+
+    Contact form submissions stored in Supabase
+    Email notifications to staff via Brevo
+    WhatsApp deep linking for mobile users
+    Support ticket creation and tracking
+
+4. Database Schema
+Supabase Tables
+
+Products:
+
+    id (PK)
+    slug (unique)
+    name
+    description
+    price
+    sale_price
+    inventory_count
+    category_id (FK)
+    created_at
+    updated_at
+    metadata (JSONB for flexible attributes)
+
+Categories:
+
+    id (PK)
+    slug (unique)
+    name
+    parent_id (FK, self-referencing)
+    description
+    image_url
+
+Users:
+
+    id (PK)
+    email
+    phone_number
+    first_name
+    last_name
+    created_at
+    last_login_at
+    is_business_customer (boolean)
+
+Orders:
+
+    id (PK)
+    user_id (FK, nullable for guest checkout)
+    status
+    shipping_address_id (FK)
+    billing_address_id (FK)
+    payment_method
+    payment_id
+    total_amount
+    shipping_amount
+    tax_amount
+    discount_amount
+    created_at
+    updated_at
+    notes
+
+Order_Items:
+
+    id (PK)
+    order_id (FK)
+    product_id (FK)
+    quantity
+    price_at_purchase
+    total_item_price
+
+Addresses:
+
+    id (PK)
+    user_id (FK)
+    name
+    address_line1
+    address_line2
+    city
+    state
+    postal_code
+    country
+    phone
+    is_default_shipping (boolean)
+    is_default_billing (boolean)
+
+Carts:
+
+    id (PK)
+    user_id (FK, nullable for guest carts)
+    session_id
+    created_at
+    updated_at
+
+Cart_Items:
+
+    id (PK)
+    cart_id (FK)
+    product_id (FK)
+    quantity
+    added_at
+
+Row-Level Security Policies
+
+    Products: Read-only for public, full access for admins
+    Orders: User can read/write only their own orders
+    Cart: User can read/write only their own cart
+    User data: Strict policies limiting access to personal information
+
+5. Performance Optimizations
+Mobile-First Design
+
+    Implement 100% mobile-first development approach
+    Design for vertical scrolling with minimum required interactions
+    Optimize touch targets (minimum 44x44px)
+    Use system fonts with strategic font subsetting when custom fonts required
+
+Network Resilience
+
+    Implement service worker with offline capabilities for:
+        Already-visited product pages
+        Home page with essential navigation
+        User's cart contents
+        Order confirmation page
+    Add network status indicators with automatic retry logic
+    Implement progressive loading tiers based on connection quality
+    Use IndexedDB for local product search when offline
+
+Performance Targets
+
+    First Contentful Paint: < 1.2s on 3G connections
+    Time to Interactive: < 3.5s on low-end devices
+    Largest Contentful Paint: < 2.5s
+    Maximum bundle size: 100KB (compressed) for critical path
+    Total page weight: < 500KB on initial load for product pages
+    Server response time: < 200ms for API calls
+
+Image Optimization
+
+    Implement responsive images with multiple breakpoints
+    Use WebP with JPEG fallback
+    Lazy-load all images below the fold
+    Implement blur-up technique for progressive loading
+    Set quality thresholds based on connection speed
+
+JavaScript Optimization
+
+    Tree-shake all dependencies
+    Dynamic imports for non-critical components
+    Implement code-splitting by route
+    Cache JavaScript assets with appropriate invalidation
+    Reduce third-party script impact with facade pattern
+
+6. Security Implementation
+Authentication
+
+    Implement PKCE flow for OAuth
+    Rate limiting on authentication attempts
+    Account lockout after repeated failures
+    Secure password requirements
+
+Data Protection
+
+    Encrypt sensitive data at rest in Supabase
+    TLS for all data in transit
+    Implement CSRF protection on all forms
+    Content Security Policy implementation
+    Regular security scanning with automated tools
+
+Payment Security
+
+    PCI compliance via PayPal integration
+    Tokenization of payment information
+    No storage of complete card details
+    Fraud detection measures
+
+7. Accessibility
+
+    WCAG 2.1 AA compliance as minimum standard
+    Proper semantic HTML structure
+    Keyboard navigation support
+    Screen reader compatibility
+    Sufficient color contrast (minimum 4.5:1)
+    Focus indicators on interactive elements
+    Alternative text for all images
+    Skip navigation links
+
+8. Analytics and Monitoring
+
+    Implement custom event tracking for:
+        Product views
+        Add to cart actions
+        Checkout steps
+        Search queries
+        Filter usage
+    Core Web Vitals monitoring in production
+    Real User Monitoring (RUM) for performance data
+    Error tracking with source maps
+    Conversion funnel analysis
+
+9. Testing Strategy
+Unit Testing
+
+    Jest for isolated component and utility function testing
+    Mock Supabase, PayPal, and Brevo APIs
+    80%+ test coverage for critical paths
+
+Integration Testing
+
+    Test component interactions with React Testing Library
+    API integration validation with MSW (Mock Service Worker)
+    Database operations testing with Supabase local emulator
+
+End-to-End Testing
+
+    Use Playwright to test on Chrome, Firefox, Safari
+    Test on simulated low-end devices
+    Network throttling tests for slow connections
+    User flows for:
+        Product discovery
+        Cart management
+        Checkout completion
+        Account management
+
+Accessibility Testing
+
+    Automated testing with axe-core
+    Manual testing with screen readers
+    Keyboard navigation verification
+
+10. Deployment Strategy
+Environments
+
+    Development: Developer local environments
+    Staging: Preview deployments for each PR
+    UAT: User acceptance testing environment
+    Production: Live customer-facing environment
+
+CI/CD Pipeline
+
+    Automated testing on each commit
+    Performance budget enforcement
+    Security scanning
+    Preview deployments for content editors
+    Canary deployments for production updates
+
+Monitoring
+
+    Real-time error tracking
+    Performance monitoring dashboard
+    Uptime checks with alerting
+    Database query performance analysis
+
+11. Timeline and Milestones
+Phase 1: Foundation (Weeks 1-3)
+
+    Project setup and configuration
+    Supabase schema definition and security policies
+    Next.js application scaffolding
+    Storyblok integration
+    Authentication system implementation
+
+Phase 2: Core E-commerce (Weeks 4-7)
+
+    Product catalog implementation
+    Product detail pages
+    Shopping cart functionality
+    Mobile-first UI components
+    Search functionality
+
+Phase 3: Checkout and Payments (Weeks 8-10)
+
+    Checkout flow implementation
+    PayPal integration
+    Order management
+    Email notifications via Brevo
+    User account features
+
+Phase 4: Performance and Optimization (Weeks 11-13)
+
+    Service worker implementation
+    Performance optimization
+    Offline capabilities
+    Advanced caching strategies
+    Core Web Vitals optimization
+
+Phase 5: Testing and Launch (Weeks 14-16)
+
+    Comprehensive testing
+    Content population in Storyblok
+    UAT and bug fixes
+    Soft launch to selected users
+    Full production launch
+
+12. Risk Management
+Identified Risks
+
+    Intermittent network conditions affecting checkout completion
+    PayPal integration challenges in specific regions
+    Performance on extremely low-end devices
+    Content management complexity for non-technical staff
+
+Mitigation Strategies
+
+    Implement robust error recovery in checkout flow
+    Develop fallback payment methods for problematic regions
+    Establish baseline device specifications with degradation strategy
+    Provide comprehensive Storyblok training and documentation
