@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 #Coding workflow preferences
 
 - Focus on the areas of code relevant to the task.
@@ -5,3 +10,4 @@
 - Write thorough tests for all major funtionality.
 - Avoide making major changes to the patterns and architecture of how a feture works, after it has been shown to work well, unless explicitly instructed.
 - Always think about what the other methods and areas of code might be affected by code changes.
+- Always run the application with npm run dev:https

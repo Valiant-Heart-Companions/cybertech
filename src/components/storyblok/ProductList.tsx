@@ -90,7 +90,7 @@ export default function ProductList({ blok }: ProductListProps) {
         <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${columns} gap-6`}>
           {products.map((product) => (
             <div key={product.id} className="border rounded-md p-4 transition-transform hover:shadow-md">
-              <Link href={`/product/${product.slug}`} className="block">
+              <Link href={`/shop/${product.slug}`} className="block">
                 <div className="relative h-40 mb-4 bg-gray-100 rounded-md overflow-hidden">
                   <Image
                     src={product.image.filename}

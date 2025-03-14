@@ -9,7 +9,6 @@ Frontend
 Backend & Infrastructure
 
     Database: Supabase (PostgreSQL with real-time capabilities)
-    CMS: Storyblok (headless CMS with visual editor)
     Authentication: Supabase Auth with social login options
     Search: Algolia for primary search, with Supabase full-text fallback for offline/basic search
     Edge Functions: Vercel Edge Functions for region-specific optimizations

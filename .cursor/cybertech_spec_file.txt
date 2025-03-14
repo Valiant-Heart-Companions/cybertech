@@ -8,6 +8,9 @@ The Cecomsa clone will replicate the core e-commerce functionality of the origin
     Resilient architecture supporting intermittent connectivity
     Streamlined checkout flow capturing customer phone numbers
     Regional payment solutions with PayPal as primary processor
+    The Website is for the Dominican Republic market
+    The main languuage of the website will be Spanish although it will include a English translation.
+    The main language of the website is Spanish so at default everything should be in Spanish.
 
 2. Technology Stack
 Frontend
@@ -20,7 +23,6 @@ Frontend
 Backend & Infrastructure
 
     Database: Supabase (PostgreSQL with real-time capabilities)
-    CMS: Storyblok (headless CMS with visual editor)
     Authentication: Supabase Auth with social login options
     Search: Algolia for primary search, with Supabase full-text fallback for offline/basic search
     Edge Functions: Vercel Edge Functions for region-specific optimizations
@@ -48,7 +50,7 @@ Deployment
 3. Core Features
 3.1 Homepage
 
-Content (Storyblok-managed):
+Content:
 
     Hero section with mobile-optimized image carousel (max 3 slides)
     Featured products section with lazy-loaded images
@@ -64,7 +66,7 @@ Technical Implementation:
 
 3.2 Product Catalog
 
-Content (Storyblok-managed):
+Content:
 
     Category hierarchy with thumbnail images
     Product listings with optimized preview images
@@ -88,7 +90,7 @@ Mobile Optimizations:
 
 3.3 Product Detail Page
 
-Content (Storyblok-managed):
+Content:
 
     Product images (main + gallery)
     Product title, description, price, SKU
@@ -159,7 +161,7 @@ Technical Implementation:
 
 3.6 Corporate Solutions
 
-Content (Storyblok-managed):
+Content:
 
     Business services description
     Financing options with calculator
@@ -200,7 +202,6 @@ Mobile Optimizations:
 
 Capabilities:
 
-    Storyblok integration for content management
     Order management dashboard with filtering and search
     Customer data access with privacy controls
     Sales and inventory reports
@@ -215,7 +216,7 @@ Technical Implementation:
 
 3.9 Contact and Support
 
-Content (Storyblok-managed):
+Content:
 
     Contact information (phone, WhatsApp, email)
     Office locations and hours
