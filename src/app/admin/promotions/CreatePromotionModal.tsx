@@ -74,7 +74,7 @@ export default function CreatePromotionModal({ isOpen, onClose, onSubmit }: Crea
       newErrors.starts_at = 'La fecha de inicio es requerida';
     }
     
-    if (formData.expires_at && new Date(formData.expires_at) <= new Date(formData.starts_at)) {
+    if (formData.expires_at && new Date(formData.expires_at as string) <= new Date(formData.starts_at as string)) {
       newErrors.expires_at = 'La fecha de expiración debe ser posterior a la fecha de inicio';
     }
     
