@@ -27,7 +27,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-async function checkTableExists(tableName) {
+async function checkTableExists(tableName: string) {
   try {
     const { data, error } = await supabase
       .from(tableName)
