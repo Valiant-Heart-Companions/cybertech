@@ -7,8 +7,6 @@
     "build": "next build",
     "check": "next lint && tsc --noEmit",
     "dev": "next dev",
-    "dev:https": "node server.cjs",
-    "generate-ssl": "chmod +x ./scripts/generate-ssl.sh && ./scripts/generate-ssl.sh",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "lint": "next lint",
