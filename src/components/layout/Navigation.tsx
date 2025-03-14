@@ -67,9 +67,9 @@ export default function Navigation() {
                 <Image
                   src="/images/logo_cybertech.png"
                   alt="Cybertech"
-                  width={180}
-                  height={60}
-                  className="h-12 w-auto sm:h-14 object-contain"
+                  width={720}
+                  height={240}
+                  className="h-48 w-auto object-contain"
                   priority
                 />
               </Link>

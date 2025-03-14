@@ -55,10 +55,12 @@ export default function Footer() {
             <Image
               src="/images/logo_cybertech.png"
               alt="Cybertech"
-              width={240}
-              height={80}
-              className="h-16 w-auto sm:h-20 object-contain"
+              width={1440}
+              height={480}
+              className="h-96 w-auto object-contain"
               priority
+              quality={100}
+              unoptimized={true}
             />
           </Link>
 
