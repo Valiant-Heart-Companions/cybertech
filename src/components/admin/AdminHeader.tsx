@@ -7,7 +7,7 @@ import { UserIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 export default function AdminHeader() {
-  const { user, role, signOut, isLoading } = useAdminAuth();
+  const { user, signOut, isLoading } = useAdminAuth();
 
   return (
     <header className="bg-white shadow-sm z-10">
@@ -46,7 +46,7 @@ export default function AdminHeader() {
                   <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="px-4 py-2">
                       <p className="text-sm text-gray-700">{user.email}</p>
-                      <p className="text-xs font-medium text-gray-500 capitalize">{role}</p>
+                      <p className="text-xs font-medium text-gray-500 capitalize">{user.role}</p>
                     </div>
                     <hr />
                     <Menu.Item>
