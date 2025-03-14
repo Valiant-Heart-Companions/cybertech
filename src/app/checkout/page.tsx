@@ -10,6 +10,18 @@ import OrderSummary from './OrderSummary';
 
 type CheckoutStep = 'contact' | 'shipping' | 'payment';
 
+interface ShippingFormData {
+  firstName: string;
+  lastName: string;
+  address: string;
+  apartment: string;
+  city: string;
+  province: string;
+  sector: string;
+  references: string;
+  country: string;
+}
+
 export default function CheckoutPage() {
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('contact');
   const [formData, setFormData] = useState({
@@ -23,10 +35,11 @@ export default function CheckoutPage() {
       address: '',
       apartment: '',
       city: '',
-      state: '',
-      postalCode: '',
-      country: 'Nicaragua',
-    },
+      province: 'Distrito Nacional',
+      sector: '',
+      references: '',
+      country: 'República Dominicana',
+    } as ShippingFormData,
   });
 
   const { items, totalPrice } = useCart();
