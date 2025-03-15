@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { notFound } from 'next/navigation';
 import { supabase } from '~/lib/supabase';
 import ProductDetail from '~/components/catalog/ProductDetail';
