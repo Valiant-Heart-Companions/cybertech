@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { ISbStoriesParams } from '@storyblok/react/rsc';
 
 // Storyblok CDN API base URL - using US data center

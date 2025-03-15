@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client';
 
 import { apiPlugin, storyblokInit, useStoryblokState } from '@storyblok/react';

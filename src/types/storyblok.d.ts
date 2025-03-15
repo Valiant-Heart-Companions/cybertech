@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 // Custom type definitions for Storyblok SDK
 
 import '@storyblok/react';

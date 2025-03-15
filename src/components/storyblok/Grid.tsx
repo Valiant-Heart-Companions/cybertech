@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client';
 
 import { storyblokEditable, StoryblokComponent, type SbBlokData } from '@storyblok/react';

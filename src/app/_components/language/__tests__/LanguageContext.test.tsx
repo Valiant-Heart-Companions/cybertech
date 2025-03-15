@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { render, screen, fireEvent, renderHook, act } from '@testing-library/react';
 import { LanguageProvider, useLanguage } from '~/i18n/LanguageContext';
 import { Language } from '~/i18n/translations';

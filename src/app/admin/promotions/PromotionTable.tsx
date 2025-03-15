@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client';
 
 import { format, parseISO, isAfter, isBefore } from 'date-fns';

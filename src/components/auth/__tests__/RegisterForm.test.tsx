@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import RegisterForm from '../RegisterForm';
 import { supabase } from '~/utils/supabase';

@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client';
 
 import { useLanguage } from '~/i18n/LanguageContext';

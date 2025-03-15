@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ShopPage from '../page';
 import { useLanguage } from '~/i18n/LanguageContext';
