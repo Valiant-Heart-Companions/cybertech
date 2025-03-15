@@ -1,7 +1,7 @@
 /* eslint-disable */
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ProductGrid from '~/components/catalog/ProductGrid';
 import CategorySidebar from '~/components/catalog/CategorySidebar';
@@ -10,7 +10,7 @@ import { useLanguage } from '~/i18n/LanguageContext';
 import { translations } from '~/i18n/translations';
 import { ListBulletIcon, XMarkIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 
-export default function ShopPage() {
+function ShopPageContent() {
   const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -160,5 +160,24 @@ export default function ShopPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    }>
+      <ShopPageContent />
+    </Suspense>
   );
 } 

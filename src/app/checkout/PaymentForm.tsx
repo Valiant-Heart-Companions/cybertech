@@ -6,6 +6,7 @@ import { useCart } from '../_components/cart/CartContext';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import type { CreateOrderData, CreateOrderActions, OnApproveData, OnApproveActions } from '@paypal/paypal-js';
 import { useLanguage } from '~/i18n/LanguageContext';
+import { useRouter } from 'next/navigation';
 
 interface PaymentFormProps {
   formData: {
@@ -31,6 +32,7 @@ interface PaymentFormProps {
 export default function PaymentForm({ formData, onBack }: PaymentFormProps) {
   const { items, totalPrice, clearCart } = useCart();
   const { language } = useLanguage();
+  const router = useRouter();
 
   // Calculate ITBIS (18% VAT in Dominican Republic)
   const subtotal = totalPrice;
@@ -138,7 +140,7 @@ export default function PaymentForm({ formData, onBack }: PaymentFormProps) {
       // 5. Redirect to success page
       
       clearCart();
-      window.location.href = '/checkout/success';
+      router.push('/checkout/success');
     } catch (error) {
       console.error('Error processing payment:', error);
       // Handle error appropriately
