@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useCart, CartItem } from './CartContext';
+import { useCart } from './CartContext';
+import type { CartItem } from './CartContext';
 import { ShoppingCartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '~/i18n/LanguageContext';
 

@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useCart, CartItem } from '~/app/_components/cart/CartContext';
+import { useCart } from '~/app/_components/cart/CartContext';
+import type { CartItem } from '~/app/_components/cart/CartContext';
 import { useLanguage } from '~/i18n/LanguageContext';
 import { formatCurrency } from '~/utils/format';
 

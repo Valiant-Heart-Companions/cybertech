@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { useCart, CartItem } from './CartContext';
+import { useCart } from './CartContext';
+import type { CartItem } from './CartContext';
 import { useLanguage } from '~/i18n/LanguageContext';
 
 interface CartItemProps {
