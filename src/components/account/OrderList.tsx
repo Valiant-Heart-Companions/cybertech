@@ -32,7 +32,7 @@ type SupabaseOrderResponse = {
     quantity: number;
     product: Array<{
       name: string;
-      price: number;
+      list_price: number;
     }>;
   }[];
 };
@@ -66,7 +66,7 @@ export default function OrderList() {
               quantity,
               product:products (
                 name,
-                price
+                list_price
               )
             )
           `)
@@ -78,6 +78,8 @@ export default function OrderList() {
           setLoading(false);
           return;
         }
+
+        
 
         if (supabaseError) {
           setError(t.account.orders.fetchError);
@@ -92,7 +94,7 @@ export default function OrderList() {
             quantity: item.quantity,
             product: {
               name: item.product?.[0]?.name || t.account.orders.productNotFound,
-              price: item.product?.[0]?.price || 0
+              price: item.product?.[0]?.list_price || 0
             }
           }))
         }));

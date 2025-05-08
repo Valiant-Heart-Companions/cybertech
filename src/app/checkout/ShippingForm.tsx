@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useLanguage } from '~/i18n/LanguageContext';
+import { useEffect } from 'react';
+import { supabase } from '~/utils/supabase';
 
 interface ShippingFormData {
   firstName: string;
@@ -86,6 +88,22 @@ export default function ShippingForm({ initialData, onSubmit, onBack }: Shipping
     }
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const userMetadata = user.user_metadata as { first_name?: string, last_name?: string } | null;
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          firstName: userMetadata?.first_name ?? '',
+          lastName: userMetadata?.last_name ?? '',
+        }));
+      }
+    };
+  
+    void fetchUser();
+  }, []);
+
   const validateForm = (): boolean => {
     const newErrors: Partial<ShippingFormData> = {};
     const required = ['firstName', 'lastName', 'address', 'city', 'province', 'sector'] as const;
@@ -120,6 +138,7 @@ export default function ShippingForm({ initialData, onSubmit, onBack }: Shipping
             type="text"
             id="firstName"
             name="firstName"
+            readOnly
             value={formData.firstName}
             onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
             className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -139,6 +158,7 @@ export default function ShippingForm({ initialData, onSubmit, onBack }: Shipping
             type="text"
             id="lastName"
             name="lastName"
+            readOnly
             value={formData.lastName}
             onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
             className={`mt-1 block w-full rounded-md shadow-sm ${

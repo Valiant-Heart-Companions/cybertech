@@ -1,31 +1,58 @@
 /* eslint-disable */
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+//import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { createClient } from '@supabase/supabase-js';
 
 export async function GET(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
-  const searchParams = request.nextUrl.searchParams;
-  
-  // Check if the user is authenticated and has admin access
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  
-  const { data: userRole } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', session.user.id)
-    .single();
-  
-  if (!userRole || !['admin', 'manager', 'staff'].includes(userRole.role)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-  
-  const period = searchParams.get('period') || '30d';
-  
   try {
+    // 1. Verificar el token del header Authorization
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Authorization token missing' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    // 2. Crear cliente Supabase
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false
+        }
+      }
+    );
+
+    // 3. Verificar el token
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return NextResponse.json(
+        { error: 'Invalid or expired token' },
+        { status: 401 }
+      );
+    }
+
+    // 4. Verificar rol del usuario
+    const userRole = user.user_metadata?.role || user.app_metadata?.role;
+    if (!['admin', 'manager', 'staff'].includes(userRole)) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403 }
+      );
+    }
+
+    const searchParams = request.nextUrl.searchParams;
+    const period = searchParams.get('period') || '30d';
+  
+  
     // Calculate date range based on period
     let startDate = new Date();
     const endDate = new Date();
@@ -76,8 +103,8 @@ export async function GET(request: NextRequest) {
     
     // Get low stock products
     const { data: lowStockProducts, error: lowStockError } = await supabase
-      .from('admin_inventory_view')
-      .select('product_id, product_name, sku, current_stock')
+      .from('products')
+      .select('id, name, sku, current_stock')
       .lt('current_stock', 10)
       .gt('current_stock', 0)
       .order('current_stock', { ascending: true })
@@ -90,8 +117,8 @@ export async function GET(request: NextRequest) {
     
     // Get out of stock products count
     const { count: outOfStockCount, error: outOfStockError } = await supabase
-      .from('admin_inventory_view')
-      .select('product_id', { count: 'exact', head: true })
+      .from('products')
+      .select('id', { count: 'exact', head: true })
       .lte('current_stock', 0);
     
     if (outOfStockError) {
@@ -101,8 +128,8 @@ export async function GET(request: NextRequest) {
     
     // Get recent orders
     const { data: recentOrders, error: recentOrdersError } = await supabase
-      .from('admin_orders_view')
-      .select('order_id, created_at, status, total_amount, customer_email')
+      .from('orders')
+      .select('id, status, total_amount, tax_amount')
       .order('created_at', { ascending: false })
       .limit(5);
     

@@ -55,7 +55,7 @@ export const translations = {
       },
     },
     shop: {
-      title: 'Tienda',
+      title: 'Productos',
       featured: 'Destacados',
       items: {
         singular: 'producto',

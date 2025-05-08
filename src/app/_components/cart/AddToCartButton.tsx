@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useCart } from './CartContext';
 import type { CartItem } from './CartContext';
-import { ShoppingCartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon/*, MinusIcon, PlusIcon*/ } from '@heroicons/react/24/outline';
 import { useLanguage } from '~/i18n/LanguageContext';
+import { useMemo } from 'react';
 
 interface AddToCartButtonProps {
   product: {
@@ -50,9 +51,17 @@ export default function AddToCartButton({ product, className = '' }: AddToCartBu
     }, 1000);
   };
 
+  // Busca si el producto ya está en el carrito
+  const cartItemQuantity = useMemo(() => {
+    const item = typeof window !== 'undefined' 
+      ? (JSON.parse(localStorage.getItem('cart') ?? '[]') as CartItem[]).find((i) => i.productId === product.id)
+      : null;
+    return item?.quantity ;
+  }, [product.id, isAdding]);
+
   return (
     <div className="flex items-center space-x-4">
-      <div className="flex items-center space-x-2">
+      {/*<div className="flex items-center space-x-2">
         <button
           type="button"
           onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -72,21 +81,31 @@ export default function AddToCartButton({ product, className = '' }: AddToCartBu
         >
           <PlusIcon className="h-4 w-4" />
         </button>
-      </div>
+      </div>*/}
       
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        disabled={isAdding}
-        className={`flex items-center justify-center space-x-2 px-6 py-3 border border-transparent rounded-md 
-          ${isAdding ? 'bg-green-600' : 'bg-indigo-600'} 
-          ${isAdding ? 'hover:bg-green-700' : 'hover:bg-indigo-700'} 
-          text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
-          disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${className}`}
-      >
-        <ShoppingCartIcon className="h-5 w-5" />
-        <span>{isAdding ? t.added : t.addToCart}</span>
-      </button>
+      <div className="relative">
+        <button
+          type="button"
+          
+          onClick={handleAddToCart}
+          disabled={isAdding}
+          className={`relative h-10 w-10 flex items-center justify-center rounded-full
+            ${isAdding ? 'bg-green-600' : 'bg-indigo-600'}
+            ${isAdding ? 'hover:bg-green-700' : 'hover:bg-indigo-700'}
+            text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
+            disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${className}`}
+          aria-label={t.addToCart}
+          title="Añadir al carrito"
+        >
+          <ShoppingCartIcon className="h-5 w-5" />
+          {/** BADGE DE CANTIDAD EN CARRITO */}
+          {(cartItemQuantity ?? 0) > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {cartItemQuantity}
+            </span>
+          )}
+        </button>
+      </div>
     </div>
   );
 } 

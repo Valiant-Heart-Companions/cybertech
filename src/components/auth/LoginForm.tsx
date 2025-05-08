@@ -1,6 +1,6 @@
 /* eslint-disable */
 'use client';
-
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { supabase } from '~/utils/supabase';
 import { useLanguage } from '~/i18n/LanguageContext';
@@ -14,11 +14,13 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError(null);    
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -31,6 +33,8 @@ export default function LoginForm() {
       }
 
       // Successful login will redirect in middleware
+      router.push('/');
+
     } catch (err: any) {
       setError(err.message || t.error);
     } finally {
@@ -51,7 +55,7 @@ export default function LoginForm() {
         
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-            {t.email}
+            {t.email}:
           </label>
           <input
             id="email"
@@ -65,7 +69,7 @@ export default function LoginForm() {
         
         <div className="mb-6">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-            {t.password}
+            {t.password}:
           </label>
           <input
             id="password"

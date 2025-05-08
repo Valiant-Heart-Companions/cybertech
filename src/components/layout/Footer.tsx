@@ -6,6 +6,10 @@ import Image from 'next/image';
 import { useLanguage } from '~/i18n/LanguageContext';
 import { translations } from '~/i18n/translations';
 
+import { useEffect, useState } from 'react';
+import { supabase } from '~/utils/supabase';
+import type { User } from '@supabase/supabase-js';
+
 const footerNavigation = {
   main: [
     { name: 'aboutUs', href: '/about' },
@@ -46,6 +50,18 @@ const footerNavigation = {
 export default function Footer() {
   const { language } = useLanguage();
   const t = translations[language];
+  const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+  const getUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setUser(user);
+    setIsAdmin(user?.user_metadata?.role === 'admin');
+  };
+
+  getUser();
+}, []);
 
   return (
     <footer className="bg-white">
@@ -76,6 +92,18 @@ export default function Footer() {
                 </Link>
               </div>
             ))}
+            {isAdmin && (
+  
+              <div key="Zona Admin" className="px-5 py-4">
+              <Link
+                href="/admin"
+                className="text-base text-gray-500 hover:text-gray-900"
+              >
+                Zona Admin
+              </Link>
+            </div>
+
+            )}
           </nav>
           <div className="mt-8 flex justify-center space-x-6">
             {footerNavigation.social.map((item) => (
@@ -88,7 +116,12 @@ export default function Footer() {
                 <item.icon className="h-6 w-6" aria-hidden="true" />
               </a>
             ))}
+
+
+
+
           </div>
+          
           <p className="mt-8 text-center text-base text-gray-400">
             &copy; {new Date().getFullYear()} Cybertech. {t.footer.allRightsReserved}
           </p>

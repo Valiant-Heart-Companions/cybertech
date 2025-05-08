@@ -10,6 +10,7 @@ import type { Product } from '~/lib/supabase';
 import { useLanguage } from '~/i18n/LanguageContext';
 import { translations } from '~/i18n/translations';
 import AddToCartButton from '~/app/_components/cart/AddToCartButton';
+import { HeartIcon } from '@heroicons/react/24/outline';
 
 export default function ProductGrid() {
   const searchParams = useSearchParams();
@@ -212,62 +213,74 @@ export default function ProductGrid() {
 
       {/* Product grid - single column on mobile */}
       {products.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {products.map((product) => (
             <div
               key={product.id}
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col"
             >
-              <Link href={`/shop/${product.sku}`} className="flex flex-col">
-                <div className="relative w-full aspect-square">
-                  {product.image_url ? (
-                    <Image
-                      src={product.image_url}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-400">{t.shop.noImage}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-3 sm:p-4 flex-1">
-                  <h3 className="text-sm sm:text-base font-medium text-gray-900 line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
-                    <div className="flex items-center">
-                      <span className="text-base sm:text-lg font-semibold text-gray-900">
-                        ${product.current_price.toFixed(2)}
-                      </span>
-                      {product.list_price && product.list_price > product.current_price && (
-                        <span className="text-xs sm:text-sm text-gray-500 line-through ml-2">
-                          ${product.list_price.toFixed(2)}
+              <div className="flex flex-col h-full">
+                <Link href={`/shop/${product.sku}`} className="flex flex-col flex-1" title="Ver Detalles">
+                  <div className="relative w-full aspect-square">
+                    {product.image_url ? (
+                      <Image
+                        src={product.image_url}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-400">{t.shop.noImage}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-3 sm:p-4">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
+                      <div className="flex items-center">
+                        <span className="text-base sm:text-lg font-semibold text-gray-900">
+                          Bs.{product.current_price.toFixed(2)}
+                        </span>
+                        {product.list_price && product.list_price > product.current_price && (
+                          <span className="text-xs sm:text-sm text-gray-500 line-through ml-2">
+                            Bs{product.list_price.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      {product.discount_percentage && (
+                        <span className="text-xs sm:text-sm text-red-600 font-medium">
+                          {product.discount_percentage}% OFF
                         </span>
                       )}
                     </div>
-                    {product.discount_percentage && (
-                      <span className="text-xs sm:text-sm text-red-600 font-medium">
-                        {product.discount_percentage}% OFF
-                      </span>
-                    )}
                   </div>
-                  <div className="mt-3">
-                    <AddToCartButton
-                      product={{
-                        id: product.id.toString(),
-                        name: product.name,
-                        price: product.current_price,
-                        image: product.image_url || undefined
-                      }}
-                      className="w-full"
-                    />
-                  </div>
+                </Link>
+
+                <div className="px-3 pb-4 flex space-x-2">
+                  <AddToCartButton
+                    product={{
+                      id: product.id.toString(),
+                      name: product.name,
+                      price: product.current_price,
+                      image: product.image_url || undefined
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="h-10 w-10 flex items-center justify-center rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors"
+                    aria-label="Agregar a lista de deseos"
+                    title="Añadir a la lista de deseo"
+                    onClick={() => alert('Añadido a favoritos')}
+                  >
+                    <HeartIcon className="h-5 w-5" />
+                  </button>
                 </div>
-              </Link>
+              </div>
+
             </div>
           ))}
         </div>

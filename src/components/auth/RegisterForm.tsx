@@ -28,6 +28,7 @@ export default function RegisterForm() {
       console.log('Starting registration process...');
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
+        //phone: phone_number,
         password,
         options: {
           data: {

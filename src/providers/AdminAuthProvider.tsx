@@ -50,9 +50,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         
         // Get user profile with role
         const { data: profile, error } = await supabase
-          .from('admin_profiles')
+          .from('auth.users')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('id', session.user.id)
           .single();
         
         if (error || !profile) {
@@ -70,15 +70,15 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         setUser({
           id: session.user.id,
           email: session.user.email || '',
-          role: profile.role,
+          role: profile.user_metadata.role,
           firstName: profile.first_name,
           lastName: profile.last_name
         });
         
         // If user is not admin/manager and trying to access admin pages
         if (
-          profile.role !== 'admin' && 
-          profile.role !== 'manager' && 
+          profile.user_metadata.role !== 'admin' && 
+          profile.user_metadata.role !== 'manager' && 
           pathname?.startsWith('/admin') && 
           pathname !== '/admin/login'
         ) {

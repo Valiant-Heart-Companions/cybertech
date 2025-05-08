@@ -36,6 +36,7 @@ export default function Navigation() {
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      //console.log('User:', user);
       setUser(user);
     };
 
@@ -136,18 +137,57 @@ export default function Navigation() {
             </div>
 
             {/* Account Link */}
-            <div className="hidden sm:ml-6 sm:flex sm:items-center">
-              <Link
-                href={user ? '/account' : '/auth'}
-                className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
-                  pathname === '/account' || pathname === '/auth'
-                    ? 'border-b-2 border-indigo-500 text-gray-900'
-                    : 'border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                }`}
+            {user ? (
+            <div className="relative hidden sm:flex sm:ml-6 sm:items-center group">
+              {/* Botón principal que muestra solo el email (sin acción) */}
+              <div
+                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-indigo-500 group-hover:text-gray-700"
               >
-                {t.navigation.account}
-              </Link>
+                {user.email}
+                <svg
+                  className="ml-1 h-4 w-4 text-gray-500 group-hover:text-gray-700"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+
+              {/* Dropdown */}
+              <div className="absolute left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 hidden group-hover:block">
+                <Link
+                  href="/account"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  {language === 'es' ? 'Mi perfil' : 'My Profile'}
+                </Link>
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    router.push('/');
+                  }}
+                  className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+                >
+                  {language === 'es' ? 'Cerrar sesión' : 'Logout'}
+                </button>
+              </div>
             </div>
+            ) : (
+              <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                <Link
+                  href="/auth"
+                  className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                    pathname === '/auth'
+                      ? 'border-b-2 border-indigo-500 text-gray-900'
+                      : 'border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  }`}
+                >
+                  {t.navigation.account}
+                </Link>
+              </div>
+            )}
+
 
             {/* Cart Link */}
             <div className="ml-4 flow-root lg:ml-6">
@@ -218,16 +258,42 @@ export default function Navigation() {
             </Link>
           ))}
           {/* Mobile Account Link */}
-          <Link
-            href={user ? '/account' : '/auth'}
-            className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-              pathname === '/account' || pathname === '/auth'
-                ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
-            }`}
-          >
-            {t.navigation.account}
-          </Link>
+          {user ? (
+            <div className="border-t border-gray-200">
+              <div className="px-4 py-3">
+                <p className="text-base font-medium text-gray-800">{user.email}</p>
+              </div>
+              <div className="space-y-1">
+                <Link
+                  href="/account"
+                  className="block px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  {language === 'es' ? 'Mi perfil' : 'My Profile'}
+                </Link>
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    router.push('/');
+                  }}
+                  className="block w-full text-left px-4 py-2 text-base font-medium text-red-600 hover:bg-red-100"
+                >
+                  {language === 'es' ? 'Cerrar sesión' : 'Logout'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Link
+              href="/auth"
+              className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
+                pathname === '/auth'
+                  ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
+                  : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
+              }`}
+            >
+              {t.navigation.account}
+            </Link>
+          )}
+
           <div className="pl-3 pr-4 py-2">
             <LanguageSwitcher />
           </div>

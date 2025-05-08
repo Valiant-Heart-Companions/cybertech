@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useLanguage } from '~/i18n/LanguageContext';
-
+import { useEffect } from 'react';
+import { supabase } from '~/utils/supabase';
 interface ContactFormData {
   email: string;
   phone: string;
@@ -33,6 +34,21 @@ export default function ContactForm({ initialData, onSubmit }: ContactFormProps)
     },
     continue: language === 'es' ? 'Continuar a Envío' : 'Continue to Shipping'
   };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const userMetadata = user.user_metadata as { phone_number?: string } | null;
+        setFormData({
+          email: user.email ?? '',
+          phone: userMetadata?.phone_number ?? '',
+        });
+      }
+    };
+  
+    void fetchUser();
+  }, []);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<ContactFormData> = {};
@@ -69,12 +85,13 @@ export default function ContactForm({ initialData, onSubmit }: ContactFormProps)
       <div className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            {t.email.label}
+            {t.email.label}:
           </label>
           <input
             type="email"
             id="email"
             name="email"
+            readOnly
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -88,12 +105,13 @@ export default function ContactForm({ initialData, onSubmit }: ContactFormProps)
 
         <div>
           <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-            {t.phone.label}
+            {t.phone.label}:
           </label>
           <input
             type="tel"
             id="phone"
             name="phone"
+            readOnly
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             className={`mt-1 block w-full rounded-md shadow-sm ${

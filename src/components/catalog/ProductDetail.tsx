@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import type { Product } from '~/lib/supabase';
 import AddToCartButton from '~/app/_components/cart/AddToCartButton';
-
+import { HeartIcon } from '@heroicons/react/24/outline';
 interface ProductDetailProps {
   product: Product;
 }
@@ -97,7 +97,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           </div>
 
           {/* Add to Cart Button */}
-          <div className="py-4">
+          <div className="flex items-center space-x-2">
             <AddToCartButton
               product={{
                 id: product.id.toString(),
@@ -105,8 +105,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 price: product.current_price,
                 image: getAbsoluteImageUrl(product.image_url)
               }}
-              className="w-full"
+              className=""
             />
+            <button
+              type="button"
+              className="h-10 w-10 flex items-center justify-center rounded-full bg-red-600 text-white hover:bg-red-700 transition-colors"
+              aria-label="Agregar a lista de deseos"
+              onClick={() => alert('Añadido a favoritos')} // Aquí luego puedes conectar lógica real
+            >
+              <HeartIcon className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Specifications */}
