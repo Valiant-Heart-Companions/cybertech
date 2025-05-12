@@ -58,6 +58,8 @@ export default function Navigation() {
     }
   };
 
+  //console.log('User:', user);
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -143,7 +145,7 @@ export default function Navigation() {
               <div
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 border-b-2 border-indigo-500 group-hover:text-gray-700"
               >
-                {user.email}
+                {user.user_metadata.first_name}
                 <svg
                   className="ml-1 h-4 w-4 text-gray-500 group-hover:text-gray-700"
                   fill="none"
@@ -261,7 +263,7 @@ export default function Navigation() {
           {user ? (
             <div className="border-t border-gray-200">
               <div className="px-4 py-3">
-                <p className="text-base font-medium text-gray-800">{user.email}</p>
+                <p className="text-base font-medium text-gray-800">{user.user_metadata.first_name}</p>
               </div>
               <div className="space-y-1">
                 <Link

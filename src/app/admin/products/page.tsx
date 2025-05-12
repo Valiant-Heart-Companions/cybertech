@@ -12,6 +12,10 @@ export default function AdminProducts() {
     current_price: number;
     brand: string;
     model: string;
+    category: string;
+    categories?: {
+    slug: string;
+  } | null;
   }
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,8 +23,14 @@ export default function AdminProducts() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-      if (!error) setProducts(data || []);
+       const { data, error } = await supabase
+      .from('products')
+      .select('id, name, current_price, brand, model, category, categories(slug)')
+      .order('created_at', { ascending: false });
+
+      const prods = data as Product[] | null;
+
+      if (!error) setProducts(prods ?? []);
       setLoading(false);
     };
     void fetchProducts();
@@ -46,6 +56,7 @@ export default function AdminProducts() {
               <th className="p-2">Precio</th>
               <th className="p-2">Marca</th>
               <th className="p-2">Modelo</th>
+              <th className="p-2">Categoría</th>
               <th className="p-2">Acciones</th>
             </tr>
           </thead>
@@ -56,6 +67,7 @@ export default function AdminProducts() {
                 <td className="p-2">${product.current_price}</td>
                 <td className="p-2">{product.brand}</td>
                 <td className="p-2">{product.model}</td>
+                <td className="p-2">{product.category}</td>
                 <td className="p-2">
                   <Link
                     href={`/admin/products/edit/${product.id}`}
